@@ -1,0 +1,13 @@
+FROM eclipse-temurin:17-jdk
+
+WORKDIR /app
+
+COPY ./backend .
+
+RUN chmod +x ./mvnw #dai i permessi di esecuzione allo script maven
+
+RUN ./mvnw package -DskipTests # Compilazione app
+
+EXPOSE 8080
+
+CMD ["java", "-jar", "target/*.jar"]

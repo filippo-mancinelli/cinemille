@@ -17,6 +17,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/auth")
+@CrossOrigin("*")
 public class AuthController {
 
   @Autowired
@@ -100,7 +101,5 @@ public class AuthController {
     public String getPassword() {
       return password;
     }
-
   }
-
 }
