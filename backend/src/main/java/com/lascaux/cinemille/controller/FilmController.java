@@ -22,20 +22,17 @@ public class FilmController {
   FilmService filmService;
 
   @GetMapping
-  public List<Film> getAllFilms(@RequestParam(required = false) Optional<LocalDate> from, @RequestParam(required = false) Optional<LocalDate> to) {
-    if (from.isPresent() && to.isPresent()) {
-      return filmRepository.findByDataInizioGreaterThanEqualAndDataFineLessThanEqual(from.get(), to.get());
-    } else if (from.isPresent()) {
-      return filmRepository.findByDataInizioGreaterThanEqual(from.get());
-    } else if (to.isPresent()) {
-      return filmRepository.findByDataFineLessThanEqual(to.get());
-    } else {
+  public List<Film> getAllFilms() {
       return filmRepository.findAll();
-    }
   }
 
   @GetMapping("/{id}")
   public Film getFilmById(@PathVariable int id) {
     return this.filmRepository.findById(id).orElse(null);
+  }
+
+  @GetMapping("/{genere}")
+  public List<Film> getFilmByGenere(@PathVariable String genere) {
+    return this.filmRepository.findByGenere(genere);
   }
 }

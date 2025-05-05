@@ -15,8 +15,7 @@ public class Film {
 
   private String titolo;
   private String genere;
-  private LocalDate dataInizio;
-  private LocalDate dataFine;
+  private LocalDate dataUscita;
 
   public int getId() {
     return id;
@@ -42,19 +41,11 @@ public class Film {
     this.genere = genere;
   }
 
-  public LocalDate getDataInizio() {
-    return dataInizio;
+  public LocalDate getDataUscita() {
+    return dataUscita;
   }
 
-  public void setDataInizio(LocalDate dataInizio) {
-    this.dataInizio = dataInizio;
-  }
-
-  public LocalDate getDataFine() {
-    return dataFine;
-  }
-
-  public void setDataFine(LocalDate dataFine) {
-    this.dataFine = dataFine;
+  public void setDataUscita(LocalDate dataUscita) {
+    this.dataUscita = dataUscita;
   }
 }
