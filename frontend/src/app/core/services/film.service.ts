@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { formatDate } from '@angular/common';
+import { Observable, map } from 'rxjs';
 import {environment} from '../../../environment';
 
 export interface Film {
@@ -24,17 +23,31 @@ export class FilmService {
     let params = new HttpParams();
 
     if (startDate) {
-      params = params.set('from', formatDate(startDate, 'yyyy-MM-dd', 'en-US'));
+      params = params.set('from', this.formatDate(startDate));
     }
 
     if (endDate) {
-      params = params.set('to', formatDate(endDate, 'yyyy-MM-dd', 'en-US'));
+      params = params.set('to', this.formatDate(endDate));
     }
 
-    return this.http.get<Film[]>(this.apiUrl, { params });
+    return this.http.get<Film[]>(this.apiUrl, { params })
+      .pipe( map(films => { //Ordina per data
+          return films.sort((a, b) =>
+            new Date(a.dataInizio).getTime() - new Date(b.dataInizio).getTime()
+          );
+        })
+      );
   }
 
   getFilmById(id: number): Observable<Film> {
     return this.http.get<Film>(`${this.apiUrl}/${id}`);
+  }
+
+  private formatDate(date: Date): string {
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
   }
 }

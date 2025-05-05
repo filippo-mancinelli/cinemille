@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatTableModule } from '@angular/material/table';
@@ -10,6 +10,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTableDataSource } from '@angular/material/table';
 import { Film, FilmService } from '../../../../core/services/film.service';
 
 @Component({
@@ -34,41 +35,43 @@ import { Film, FilmService } from '../../../../core/services/film.service';
 })
 export class FilmsListComponent implements OnInit {
   films: Film[] = [];
-  filteredFilms: Film[] = [];
+  dataSource = new MatTableDataSource<Film>([]);
   displayedColumns = ['titolo', 'genere', 'dataInizio', 'dataFine'];
   isLoading = false;
   errorMessage = '';
-
   startDate?: Date;
   endDate?: Date;
-
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   constructor(private filmService: FilmService) {}
 
   ngOnInit(): void {
     this.loadFilms();
+    this.dataSource._updateChangeSubscription();
   }
 
   loadFilms(): void {
     this.isLoading = true;
     this.errorMessage = '';
 
-  }
-
-  applyLocalFilters(): void {
-    this.filteredFilms = this.films.filter((film) => {
-      const filmStartDate = new Date(film.dataInizio);
-      const filmEndDate = new Date(film.dataFine);
-
-      const start = this.startDate ? filmStartDate >= this.startDate : true;
-      const end = this.endDate ? filmEndDate <= this.endDate : true;
-
-      return start && end;
+    this.filmService.getFilms(this.startDate, this.endDate).subscribe({
+      next: (films) => {
+        this.films = films;
+        this.dataSource.data = films; // riempi
+        this.isLoading = false;
+      },
+      error: (error) => {
+        this.isLoading = false;
+        console.error('Error fetching films:', error);
+        this.errorMessage = 'Errore durante il caricamento dei film';
+        this.films = [];
+        this.dataSource.data = []; // svuota
+      }
     });
   }
 
   applyFilters(): void {
+    console.log("this.startDate", this.startDate);
+    console.log("this.endDate", this.endDate);
     this.loadFilms();
   }
 

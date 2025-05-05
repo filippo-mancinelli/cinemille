@@ -6,13 +6,9 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface FilmRepository extends JpaRepository<Film, Integer> {
   List<Film> findAll();
-
-  List<Film> findByDataInizioGreaterThanEqualAndDataFineLessThanEqual(LocalDate from, LocalDate to);
-  List<Film> findByDataInizioGreaterThanEqual(LocalDate from);
-  List<Film> findByDataFineLessThanEqual(LocalDate to);
+  List<Film> findByGenere(String genere);
 }
