@@ -2,12 +2,24 @@ FROM eclipse-temurin:17-jdk
 
 WORKDIR /app
 
-COPY ./backend .
+# Copia prima il pom padre per rispettare la struttura dei pom
+COPY pom.xml ./
+COPY backend/pom.xml ./backend/
 
-RUN chmod +x ./mvnw #dai i permessi di esecuzione allo script maven
+COPY backend/src ./backend/src
+COPY backend/.mvn ./backend/.mvn
+COPY backend/mvnw ./backend/mvnw
+COPY backend/mvnw.cmd ./backend/mvnw.cmd
 
-RUN ./mvnw package -DskipTests # Compilazione app
+WORKDIR /app/backend
+
+# Dai i permessi di esecuzione allo script maven
+RUN chmod +x ./mvnw
+
+# Compila l'app
+RUN ./mvnw package -DskipTests
 
 EXPOSE 8080
 
-CMD ["java", "-jar", "target/*.jar"]
+# avvia app springboot
+CMD java -jar target/backend-0.0.1-SNAPSHOT.jar
