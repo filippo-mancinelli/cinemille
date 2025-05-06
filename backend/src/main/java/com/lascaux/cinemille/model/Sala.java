@@ -13,7 +13,7 @@ public class Sala {
   @GeneratedValue
   private int id;
 
-  private String nome;
+  private String codice;
   private int capienza;
   private boolean isIMAX;
 
@@ -25,12 +25,12 @@ public class Sala {
     this.id = id;
   }
 
-  public String getNome() {
-    return nome;
+  public String getCodice() {
+    return codice;
   }
 
-  public void setNome(String nome) {
-    this.nome = nome;
+  public void setCodice(String nome) {
+    this.codice = nome;
   }
 
   public int getCapienza() {

@@ -34,17 +34,11 @@ public class JwtAuthFilter extends OncePerRequestFilter implements Filter {
                                   FilterChain filterChain)
     throws ServletException, IOException {
 
-    // Controlla prima se l'url chiamato è tra quelli esclusi dai controlli di auth
-    if (pathMatcher.match("/api/auth/**", request.getServletPath()) ||
-      pathMatcher.match("/api/film/**", request.getServletPath())) {
-      filterChain.doFilter(request, response);
-      return;
-    }
-
     final String authHeader = request.getHeader("Authorization");
     final String jwt;
     final String username;
 
+    // Assumiamo che la richiesta in arrivo sia sicura perchè già SecurityConfig si occupa di permettere gli URL corretti.
     if (authHeader == null || !authHeader.startsWith("Bearer ")) {
       filterChain.doFilter(request, response);
       return;
