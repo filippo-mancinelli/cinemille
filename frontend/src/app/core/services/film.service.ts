@@ -19,18 +19,8 @@ export class FilmService {
 
   constructor(private http: HttpClient) { }
 
-  getFilms(startDate?: Date, endDate?: Date): Observable<Film[]> {
-    let params = new HttpParams();
-
-    if (startDate) {
-      params = params.set('from', this.formatDate(startDate));
-    }
-
-    if (endDate) {
-      params = params.set('to', this.formatDate(endDate));
-    }
-
-    return this.http.get<Film[]>(this.apiUrl, { params })
+  getFilms(): Observable<Film[]> {
+    return this.http.get<Film[]>(this.apiUrl)
       .pipe( map(films => { //Ordina per data
           return films.sort((a, b) =>
             new Date(a.dataInizio).getTime() - new Date(b.dataInizio).getTime()

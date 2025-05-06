@@ -12,6 +12,8 @@ import { MatCardModule } from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableDataSource } from '@angular/material/table';
 import { Film, FilmService } from '../../../../core/services/film.service';
+import {Programmazione, ProgrammazioneService} from '../../../../core/services/programmazioni.service';
+import {MatTooltipModule} from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-films-list',
@@ -26,6 +28,7 @@ import { Film, FilmService } from '../../../../core/services/film.service';
     MatDatepickerModule,
     MatNativeDateModule,
     MatButtonModule,
+    MatTooltipModule,
     MatCardModule,
     MatProgressSpinnerModule,
     DatePipe
@@ -34,15 +37,15 @@ import { Film, FilmService } from '../../../../core/services/film.service';
   styleUrl: './films-list.component.scss'
 })
 export class FilmsListComponent implements OnInit {
-  films: Film[] = [];
-  dataSource = new MatTableDataSource<Film>([]);
-  displayedColumns = ['titolo', 'genere', 'dataInizio', 'dataFine'];
+  films: Programmazione[] = [];
+  dataSource = new MatTableDataSource<Programmazione>([]);
+  displayedColumns = ['titolo', 'genere', 'sala', 'dataInizio', 'dataFine'];
   isLoading = false;
   errorMessage = '';
   startDate?: Date;
   endDate?: Date;
 
-  constructor(private filmService: FilmService) {}
+  constructor(private programmazioneService: ProgrammazioneService) {}
 
   ngOnInit(): void {
     this.loadFilms();
@@ -53,7 +56,7 @@ export class FilmsListComponent implements OnInit {
     this.isLoading = true;
     this.errorMessage = '';
 
-    this.filmService.getFilms(this.startDate, this.endDate).subscribe({
+    this.programmazioneService.getFilms(this.startDate, this.endDate).subscribe({
       next: (films) => {
         this.films = films;
         this.dataSource.data = films; // riempi

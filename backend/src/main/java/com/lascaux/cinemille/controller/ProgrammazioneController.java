@@ -7,7 +7,10 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 
 @RestController
@@ -18,16 +21,37 @@ public class ProgrammazioneController {
   @Autowired
   private ProgrammazioneService programmazioneService;
 
+  /*
+   * Questo endpoint è accessibile solo agli utenti autenticati (admin).
+   * Restituisce storico completo della programmazione, filtrabile per data inizio/fine
+   * */
   @GetMapping
   public List<Programmazione> getAllProgrammazioni(
-    @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime inizio,
-    @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fine) {
+    @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate inizio,
+    @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fine) {
 
     if (inizio != null || fine != null) {
-      return programmazioneService.getProgrammazioniByDateRange(inizio, fine);
+      LocalDateTime inizioDateTime = inizio != null ? inizio.atStartOfDay() : null;
+      LocalDateTime fineDateTime = fine != null ? fine.atTime(23, 59, 59) : null;
+
+      return programmazioneService.getProgrammazioniByDateRange(inizioDateTime, fineDateTime);
     }
 
     return programmazioneService.getAllProgrammazioni();
+  }
+
+
+  /*
+  * Questo endpoint deve essere accessibile a utenti/servizi esterni, anche non autenticati.
+  * Restituisce le programmazioni della settimana attuale
+  * */
+  @GetMapping("/settimana-corrente")
+  public List<Programmazione> getCurrentWeekProgrammazioni() {
+    LocalDateTime now = LocalDateTime.now();
+    LocalDateTime startOfWeek = now.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)).withHour(0).withMinute(0).withSecond(0);
+    LocalDateTime endOfWeek = now.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY)).withHour(23).withMinute(59).withSecond(59);
+
+    return programmazioneService.getProgrammazioniByDateRange(startOfWeek, endOfWeek);
   }
 
   @GetMapping("/{id}")
