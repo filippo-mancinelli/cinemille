@@ -18,11 +18,9 @@ public class SecurityConfig {
 
   private final JwtAuthFilter jwtAuthFilter;
   private final LoggingFilter loggingFilter;
-  private final UtenteService utenteService;
 
-  public SecurityConfig(JwtAuthFilter jwtAuthFilter, UtenteService utenteService, LoggingFilter loggingFilter) {
+  public SecurityConfig(JwtAuthFilter jwtAuthFilter, LoggingFilter loggingFilter) {
     this.jwtAuthFilter = jwtAuthFilter;
-    this.utenteService = utenteService;
     this.loggingFilter = loggingFilter;
   }
 
