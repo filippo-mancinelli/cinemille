@@ -81,6 +81,10 @@ cd frontend
 npm install
 ng serve
 ```
+## Accesso Admin
+Puoi fare il login come amministratore utilizzando:
+- utente: admin1
+- password: admin1
 
 ## Presentazione
 
